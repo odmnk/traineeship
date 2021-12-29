@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Personen</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody id="personTableBody">
+
+        </tbody>
+    </table>
+
+    <h2>Nieuw Persoon</h2>
+    <input type="text" id="persoonNaam">
+    <button type="button" onclick="VoegPersoonToe()">Voeg toe!</button>
+
+
+    <h1>Addressen</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>City</th>
+                <th>House Number</th>
+                <th>Postal Code</th>
+                <th>Street</th>
+            </tr>
+        </thead>
+        <tbody id="addressesTableBody">
+
+        </tbody>
+    </table>
+
+    <h2>Nieuw Adres</h2>
+    <input type="text" id="city">
+    <input type="text" id="houseNumber">
+    <input type="text" id="postalCode">
+    <input type="text" id="street">
+    <button type="button" onclick="VoegAdresToe()">Voeg toe!</button>
+
+   <script>
+       function VoegAdresToe() {
+           let city = document.getElementById("city").value;
+           let houseNumber = document.getElementById("houseNumber").value;
+           let postalCode = document.getElementById("postalCode").value;
+           let street = document.getElementById("street").value;
+
+           let newAdres = {
+               city: city,
+               houseNumber: houseNumber,
+               postalCode: postalCode,
+               street: street
+           }
+
+           fetch("http://localhost:8080/maakadresaan", {
+               method: "POST",
+               headers: {
+                   "Content-Type" : "application/json"
+               },
+               body: JSON.stringify (newAdres)
+           })
+
+           .then(response => {
+               alert("Is goed gegaan");
+           })
+           .catch(error => {
+               alert("Er is iets fout gegaan");
+           })
+
+
+       }
+
+       function VoegPersoonToe() {
+           let newname = document.getElementById("persoonNaam").value;
+
+           let newPerson = {
+               name: newname,
+               age: 26
+           }
+
+           fetch("http://localhost:8080/maakpersoonaan", {
+               method: "POST",
+               headers: {
+                   "Content-Type" : "application/json"
+               },
+               body: JSON.stringify (newPerson)
+           })
+
+           .then(response => {
+               alert("Is goed gegaan");
+           })
+           .catch(error => {
+               alert("Er is iets fout gegaan");
+           })
+
+
+       }
+       // Fetch API
+       let personsTableHtml = "";
+
+        function fillTable(persons) {
+            for (let person of persons) {
+                personsTableHtml += `<tr>
+                <td>${person.id}</td>
+                <td>${person.name}</td>
+                `;
+            }
+            document.getElementById("personTableBody").innerHTML = personsTableHtml;
+        }
+
+       // 1. Roep een URL aan
+       fetch("http://localhost:8080/personen")
+       .then(response => {
+           // 2. Zet antwoord om naar JSON
+           return response.json();
+       })
+       .then(personsArray => {
+        // 3. Vul tabel
+        fillTable(personsArray);
+       })
+
+
+       // Fetch API
+       let addressesTableHtml = "";
+
+        function fillAddressTable(addresses) {
+            for (let address of addresses) {
+                addressesTableHtml += `<tr>
+                <td>${address.id}</td>
+                <td>${address.city}</td>
+                <td>${address.houseNumber}</td>
+                <td>${address.postalCode}</td>
+                <td>${address.street}</td>
+                `;
+            }
+            document.getElementById("addressesTableBody").innerHTML = addressesTableHtml;
+        }
+
+       // 1. Roep een URL aan
+       fetch("http://localhost:8080/addressen")
+       .then(response => {
+           // 2. Zet antwoord om naar JSON
+           return response.json();
+       })
+       .then(addressesArray => {
+        // 3. Vul tabel
+        fillAddressTable(addressesArray);
+       })
+       
+   </script> 
+</body>
+</html>
